@@ -24,6 +24,8 @@ function isNullOrNaN(value) {
  * @property {number} similarityThreshold - The similarity threshold of the workspace
  * @property {string} chatProvider - The chat provider of the workspace
  * @property {string} chatModel - The chat model of the workspace
+ * @property {number} openRouterTopP - The OpenRouter top_p override of the workspace
+ * @property {string} openRouterReasoning - The OpenRouter reasoning override of the workspace
  * @property {number} topN - The top N of the workspace
  * @property {string} chatMode - The chat mode of the workspace
  * @property {string} agentProvider - The agent provider of the workspace
@@ -49,6 +51,8 @@ const Workspace = {
     "similarityThreshold",
     "chatProvider",
     "chatModel",
+    "openRouterTopP",
+    "openRouterReasoning",
     "topN",
     "chatMode",
     // "pfpFilename",
@@ -103,6 +107,16 @@ const Workspace = {
       return String(value);
     },
     chatModel: (value) => {
+      if (!value || typeof value !== "string") return null;
+      return String(value);
+    },
+    openRouterTopP: (value) => {
+      if (value === null || value === undefined || value === "") return null;
+      const topP = parseFloat(value);
+      if (isNullOrNaN(topP) || topP < 0 || topP > 1) return null;
+      return topP;
+    },
+    openRouterReasoning: (value) => {
       if (!value || typeof value !== "string") return null;
       return String(value);
     },

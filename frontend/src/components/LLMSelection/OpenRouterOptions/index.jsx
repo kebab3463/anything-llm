@@ -47,7 +47,7 @@ function AdvancedControls({ settings }) {
           <CaretDown size={14} className="ml-1" />
         )}
       </button>
-      <div hidden={!showAdvancedControls}>
+      <div hidden={!showAdvancedControls} className="flex flex-col gap-y-4">
         <div className="flex flex-col w-60">
           <label className="text-white text-sm font-semibold block mb-3">
             Stream Timeout (ms)
@@ -62,6 +62,36 @@ function AdvancedControls({ settings }) {
             onScroll={(e) => e.target.blur()}
             min={500}
             step={1}
+          />
+        </div>
+        <div className="flex flex-col w-60">
+          <label className="text-white text-sm font-semibold block mb-3">
+            Top P
+          </label>
+          <input
+            type="number"
+            name="OpenRouterTopP"
+            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
+            placeholder="Nucleus sampling value from 0 to 1"
+            defaultValue={settings?.OpenRouterTopP ?? ""}
+            autoComplete="off"
+            onScroll={(e) => e.target.blur()}
+            min={0}
+            max={1}
+            step={0.01}
+          />
+        </div>
+        <div className="flex flex-col w-96">
+          <label className="text-white text-sm font-semibold block mb-3">
+            Reasoning JSON
+          </label>
+          <textarea
+            name="OpenRouterReasoning"
+            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5 min-h-[96px]"
+            placeholder='{"effort":"medium","exclude":false}'
+            defaultValue={settings?.OpenRouterReasoning ?? ""}
+            autoComplete="off"
+            spellCheck={false}
           />
         </div>
       </div>

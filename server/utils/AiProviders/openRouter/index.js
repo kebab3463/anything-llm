@@ -109,6 +109,38 @@ class OpenRouterLLM {
     return setValue;
   }
 
+  /**
+   * OpenRouter accepts extra OpenAI-compatible sampling and reasoning controls.
+   * Keep these optional so existing deployments behave the same when unset.
+   * @param {{topP?: number|null, reasoning?: string|null}} overrides
+   * @returns {Object}
+   */
+  #chatOptions(overrides = {}) {
+    const options = {};
+    const topPValue = overrides.topP ?? process.env.OPENROUTER_TOP_P?.trim();
+    if (topPValue !== null && topPValue !== undefined && topPValue !== "") {
+      const topP = Number(topPValue);
+      if (!isNaN(topP) && topP >= 0 && topP <= 1) options.top_p = topP;
+    }
+
+    const reasoning =
+      overrides.reasoning ?? process.env.OPENROUTER_REASONING?.trim();
+    if (!reasoning) return options;
+
+    const parsedReasoning = safeJsonParse(reasoning, null);
+    if (
+      parsedReasoning &&
+      typeof parsedReasoning === "object" &&
+      !Array.isArray(parsedReasoning)
+    ) {
+      options.reasoning = parsedReasoning;
+    } else {
+      this.log("OpenRouter reasoning config is invalid JSON. Ignoring.");
+    }
+
+    return options;
+  }
+
   // This checks if the .cached_at file has a timestamp that is more than 1Week (in millis)
   // from the current date. If it is, then we will refetch the API so that all the models are up
   // to date.
@@ -238,7 +270,15 @@ class OpenRouterLLM {
     ];
   }
 
-  async getChatCompletion(messages = null, { temperature = 0.7, user = null }) {
+  async getChatCompletion(
+    messages = null,
+    {
+      temperature = 0.7,
+      user = null,
+      openRouterTopP = null,
+      openRouterReasoning = null,
+    }
+  ) {
     if (!(await this.isValidChatCompletionModel(this.model)))
       throw new Error(
         `OpenRouter chat: ${this.model} is not valid for chat completion!`
@@ -250,6 +290,10 @@ class OpenRouterLLM {
           model: this.model,
           messages,
           temperature,
+          ...this.#chatOptions({
+            topP: openRouterTopP,
+            reasoning: openRouterReasoning,
+          }),
           // This is an OpenRouter specific option that allows us to get the reasoning text
           // before the token text.
           include_reasoning: true,
@@ -285,7 +329,12 @@ class OpenRouterLLM {
 
   async streamGetChatCompletion(
     messages = null,
-    { temperature = 0.7, user = null }
+    {
+      temperature = 0.7,
+      user = null,
+      openRouterTopP = null,
+      openRouterReasoning = null,
+    }
   ) {
     if (!(await this.isValidChatCompletionModel(this.model)))
       throw new Error(
@@ -298,6 +347,10 @@ class OpenRouterLLM {
         stream: true,
         messages,
         temperature,
+        ...this.#chatOptions({
+          topP: openRouterTopP,
+          reasoning: openRouterReasoning,
+        }),
         // This is an OpenRouter specific option that allows us to get the reasoning text
         // before the token text.
         include_reasoning: true,

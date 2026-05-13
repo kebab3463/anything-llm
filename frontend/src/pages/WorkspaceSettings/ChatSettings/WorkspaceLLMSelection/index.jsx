@@ -163,6 +163,67 @@ export default function WorkspaceLLMSelection({
         workspace={workspace}
         setHasChanges={setHasChanges}
       />
+      <OpenRouterWorkspaceOptions
+        selectedLLM={selectedLLM}
+        settings={settings}
+        workspace={workspace}
+        setHasChanges={setHasChanges}
+      />
+    </div>
+  );
+}
+
+function OpenRouterWorkspaceOptions({
+  selectedLLM,
+  settings,
+  workspace,
+  setHasChanges,
+}) {
+  const effectiveProvider =
+    selectedLLM === "default" ? settings?.LLMProvider : selectedLLM;
+  if (effectiveProvider !== "openrouter") return null;
+
+  return (
+    <div className="mt-6 flex flex-col gap-y-4">
+      <div>
+        <label className="block input-label">OpenRouter top_p</label>
+        <p className="text-white text-opacity-60 text-xs font-medium py-1.5">
+          Optional workspace override for OpenRouter nucleus sampling. Leave
+          blank to use the global OpenRouter setting.
+        </p>
+        <input
+          type="number"
+          name="openRouterTopP"
+          defaultValue={workspace?.openRouterTopP ?? ""}
+          onChange={() => setHasChanges(true)}
+          className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
+          placeholder={settings?.OpenRouterTopP ?? "Use global setting"}
+          min={0}
+          max={1}
+          step={0.01}
+          autoComplete="off"
+          onWheel={(e) => e.target.blur()}
+        />
+      </div>
+      <div>
+        <label className="block input-label">OpenRouter reasoning JSON</label>
+        <p className="text-white text-opacity-60 text-xs font-medium py-1.5">
+          Optional workspace override for OpenRouter reasoning options. Leave
+          blank to use the global OpenRouter setting.
+        </p>
+        <textarea
+          name="openRouterReasoning"
+          defaultValue={workspace?.openRouterReasoning ?? ""}
+          onChange={() => setHasChanges(true)}
+          className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5 min-h-[96px]"
+          placeholder={
+            settings?.OpenRouterReasoning ||
+            '{"effort":"medium","exclude":false}'
+          }
+          autoComplete="off"
+          spellCheck={false}
+        />
+      </div>
     </div>
   );
 }

@@ -489,6 +489,14 @@ const KEY_MAPPING = {
     envKey: "OPENROUTER_TIMEOUT_MS",
     checks: [],
   },
+  OpenRouterTopP: {
+    envKey: "OPENROUTER_TOP_P",
+    checks: [],
+  },
+  OpenRouterReasoning: {
+    envKey: "OPENROUTER_REASONING",
+    checks: [],
+  },
 
   // Novita Options
   NovitaLLMApiKey: {

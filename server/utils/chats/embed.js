@@ -172,6 +172,8 @@ async function streamChatWithForEmbed(
     const { textResponse, metrics: performanceMetrics } =
       await LLMConnector.getChatCompletion(messages, {
         temperature: embed.workspace?.openAiTemp ?? LLMConnector.defaultTemp,
+        openRouterTopP: embed.workspace?.openRouterTopP,
+        openRouterReasoning: embed.workspace?.openRouterReasoning,
       });
     completeText = textResponse;
     metrics = performanceMetrics;
@@ -186,6 +188,8 @@ async function streamChatWithForEmbed(
   } else {
     const stream = await LLMConnector.streamGetChatCompletion(messages, {
       temperature: embed.workspace?.openAiTemp ?? LLMConnector.defaultTemp,
+      openRouterTopP: embed.workspace?.openRouterTopP,
+      openRouterReasoning: embed.workspace?.openRouterReasoning,
     });
     completeText = await LLMConnector.handleStream(response, stream, {
       uuid,
